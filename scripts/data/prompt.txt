@@ -25,6 +25,11 @@ COMMANDS:
 19. Task Complete (Shutdown): "task_complete", args: "reason": "<reason>"
 20. Generate Image: "generate_image", args: "prompt": "<prompt>"
 21. Do Nothing: "do_nothing", args: ""
+22. List Files: "list_files", args: "directory": "<directory>"
+23. List Directories: "list_directories", args: "directory": "<directory>"
+24. Create Directory: "create_directory", args: "directory": "<directory>"
+25. Delete Directory: "delete_directory", args: "directory": "<directory>"
+26. Get Current Directory: "get_current_directory", args: ""
 
 RESOURCES:
 
