@@ -16,9 +16,8 @@ class Singleton(abc.ABCMeta, type):
     def __call__(cls, *args, **kwargs):
         """Call method for the singleton metaclass."""
         if cls not in cls._instances:
-            cls._instances[cls] = super(
-                Singleton, cls).__call__(
-                *args, **kwargs)
+            cls._instances[cls] = super(Singleton,
+                                        cls).__call__(*args, **kwargs)
         return cls._instances[cls]
 
 
@@ -34,6 +33,7 @@ class Config(metaclass=Singleton):
     def __init__(self):
         """Initialize the Config class"""
         self.debug_mode = False
+        self.debug = False
         self.continuous_mode = False
         self.speak_mode = False
 
@@ -57,7 +57,7 @@ class Config(metaclass=Singleton):
 
         self.use_mac_os_tts = False
         self.use_mac_os_tts = os.getenv("USE_MAC_OS_TTS")
-        
+
         self.google_api_key = os.getenv("GOOGLE_API_KEY")
         self.custom_search_engine_id = os.getenv("CUSTOM_SEARCH_ENGINE_ID")
 
@@ -69,11 +69,15 @@ class Config(metaclass=Singleton):
 
         # User agent headers to use when browsing web
         # Some websites might just completely deny request with an error code if no user agent was found.
-        self.user_agent_header = {"User-Agent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.97 Safari/537.36"}
+        self.user_agent_header = {
+            "User-Agent":
+            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.97 Safari/537.36"
+        }
         self.redis_host = os.getenv("REDIS_HOST", "localhost")
         self.redis_port = os.getenv("REDIS_PORT", "6379")
         self.redis_password = os.getenv("REDIS_PASSWORD", "")
-        self.wipe_redis_on_start = os.getenv("WIPE_REDIS_ON_START", "True") == 'True'
+        self.wipe_redis_on_start = os.getenv("WIPE_REDIS_ON_START",
+                                             "True") == 'True'
         self.memory_index = os.getenv("MEMORY_INDEX", 'auto-gpt')
         # Note that indexes must be created on db 0 in redis, this is not configureable.
 

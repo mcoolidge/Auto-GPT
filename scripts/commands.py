@@ -6,7 +6,7 @@ import agent_manager as agents
 import speak
 from config import Config
 import ai_functions as ai
-from file_operations import read_file, write_to_file, append_to_file, delete_file, search_files
+from file_operations import read_file, write_to_file, append_to_file, delete_file, search_files, list_files, list_directories, create_directory, delete_directory, get_current_directory, safe_join
 from execute_code import execute_python_file
 from json_parser import fix_and_parse_json
 from image_gen import generate_image
@@ -24,13 +24,14 @@ def is_valid_int(value):
     except ValueError:
         return False
 
+
 def get_command(response):
     """Parse the response and return the command name and arguments"""
     try:
         response_json = fix_and_parse_json(response)
 
         if "command" not in response_json:
-            return "Error:" , "Missing 'command' object in JSON"
+            return "Error:", "Missing 'command' object in JSON"
 
         command = response_json["command"]
 
@@ -59,17 +60,16 @@ def execute_command(command_name, arguments):
 
             # Check if the Google API key is set and use the official search method
             # If the API key is not set or has only whitespaces, use the unofficial search method
-            if cfg.google_api_key and (cfg.google_api_key.strip() if cfg.google_api_key else None):
+            if cfg.google_api_key and (cfg.google_api_key.strip()
+                                       if cfg.google_api_key else None):
                 return google_official_search(arguments["input"])
             else:
                 return google_search(arguments["input"])
         elif command_name == "memory_add":
             return memory.add(arguments["string"])
         elif command_name == "start_agent":
-            return start_agent(
-                arguments["name"],
-                arguments["task"],
-                arguments["prompt"])
+            return start_agent(arguments["name"], arguments["task"],
+                               arguments["prompt"])
         elif command_name == "message_agent":
             return message_agent(arguments["key"], arguments["message"])
         elif command_name == "list_agents":
@@ -109,6 +109,16 @@ def execute_command(command_name, arguments):
             return "No action performed."
         elif command_name == "task_complete":
             shutdown()
+        elif command_name == "list_files":
+            return list_files(arguments["directory"])
+        elif command_name == "list_directories":
+            return list_directories(arguments["directory"])
+        elif command_name == "create_directory":
+            return create_directory(arguments["directory"])
+        elif command_name == "delete_directory":
+            return delete_directory(arguments["directory"])
+        elif command_name == "get_current_directory":
+            return get_current_directory()
         else:
             return f"Unknown command '{command_name}'. Please refer to the 'COMMANDS' list for availabe commands and only respond in the specified JSON format."
     # All errors, return "Error: + error message"
@@ -130,6 +140,7 @@ def google_search(query, num_results=8):
 
     return json.dumps(search_results, ensure_ascii=False, indent=4)
 
+
 def google_official_search(query, num_results=8):
     """Return the results of a google search using the official Google API"""
     from googleapiclient.discovery import build
@@ -145,7 +156,9 @@ def google_official_search(query, num_results=8):
         service = build("customsearch", "v1", developerKey=api_key)
 
         # Send the search query and retrieve the results
-        result = service.cse().list(q=query, cx=custom_search_engine_id, num=num_results).execute()
+        result = service.cse().list(q=query,
+                                    cx=custom_search_engine_id,
+                                    num=num_results).execute()
 
         # Extract the search result items from the response
         search_results = result.get("items", [])
@@ -158,13 +171,17 @@ def google_official_search(query, num_results=8):
         error_details = json.loads(e.content.decode())
 
         # Check if the error is related to an invalid or missing API key
-        if error_details.get("error", {}).get("code") == 403 and "invalid API key" in error_details.get("error", {}).get("message", ""):
+        if error_details.get(
+                "error",
+            {}).get("code") == 403 and "invalid API key" in error_details.get(
+                "error", {}).get("message", ""):
             return "Error: The provided Google API key is invalid or missing."
         else:
             return f"Error: {e}"
 
     # Return the list of search result URLs
     return search_results_links
+
 
 def browse_website(url, question):
     """Browse a website and return the summary and links"""
@@ -219,7 +236,8 @@ def overwrite_memory(key, string):
         key_int = int(key)
         # Check if the integer key is within the range of the permanent_memory list
         if 0 <= key_int < len(mem.permanent_memory):
-            _text = "Overwriting memory with key " + str(key) + " and string " + string
+            _text = "Overwriting memory with key " + str(
+                key) + " and string " + string
             # Overwrite the memory slot with the given integer key and string
             mem.permanent_memory[key_int] = string
             print(_text)
