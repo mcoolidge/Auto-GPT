@@ -103,6 +103,11 @@ def execute_command(command_name, arguments):
             return ai.write_tests(arguments["code"], arguments.get("focus"))
         elif command_name == "execute_python_file":  # Add this command
             return execute_python_file(arguments["file"])
+        elif command_name == "execute_shell":
+            if cfg.execute_local_commands:
+                return execute_shell(arguments["command_line"])
+            else:
+                return "You are not allowed to run local shell commands. To execute shell commands, EXECUTE_LOCAL_COMMANDS must be set to 'True' in your config. Do not attempt to bypass the restriction."
         elif command_name == "generate_image":
             return generate_image(arguments["prompt"])
         elif command_name == "do_nothing":
@@ -120,7 +125,7 @@ def execute_command(command_name, arguments):
         elif command_name == "get_current_directory":
             return get_current_directory()
         else:
-            return f"Unknown command '{command_name}'. Please refer to the 'COMMANDS' list for availabe commands and only respond in the specified JSON format."
+            return f"Unknown command '{command_name}'. Please refer to the 'COMMANDS' list for available commands and only respond in the specified JSON format."
     # All errors, return "Error: + error message"
     except Exception as e:
         return "Error: " + str(e)

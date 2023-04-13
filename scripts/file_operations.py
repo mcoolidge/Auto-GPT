@@ -65,6 +65,7 @@ def delete_file(filename):
     except Exception as e:
         return "Error: " + str(e)
 
+
 def search_files(directory):
     found_files = []
 
@@ -77,10 +78,12 @@ def search_files(directory):
         for file in files:
             if file.startswith('.'):
                 continue
-            relative_path = os.path.relpath(os.path.join(root, file), working_directory)
+            relative_path = os.path.relpath(os.path.join(root, file),
+                                            working_directory)
             found_files.append(relative_path)
 
     return found_files
+
 
 def list_files(directory):
     found_files = []
@@ -98,6 +101,7 @@ def list_files(directory):
 
     return found_files
 
+
 def list_directories(directory):
     found_directories = []
 
@@ -114,6 +118,7 @@ def list_directories(directory):
 
     return found_directories
 
+
 def create_directory(directory):
     try:
         directory_path = safe_join(working_directory, directory)
@@ -121,7 +126,8 @@ def create_directory(directory):
         return "Directory created successfully."
     except Exception as e:
         return "Error: " + str(e)
-    
+
+
 def delete_directory(directory):
     try:
         directory_path = safe_join(working_directory, directory)
@@ -129,7 +135,8 @@ def delete_directory(directory):
         return "Directory deleted successfully."
     except Exception as e:
         return "Error: " + str(e)
-    
+
+
 def get_current_directory():
     return working_directory
 
@@ -142,7 +149,8 @@ def rename_file(old_name, new_name):
         return "File renamed successfully."
     except Exception as e:
         return "Error: " + str(e)
-    
+
+
 def rename_directory(old_name, new_name):
     try:
         old_path = safe_join(working_directory, old_name)
@@ -151,7 +159,8 @@ def rename_directory(old_name, new_name):
         return "Directory renamed successfully."
     except Exception as e:
         return "Error: " + str(e)
-    
+
+
 def copy_file(old_name, new_name):
     try:
         old_path = safe_join(working_directory, old_name)
@@ -160,4 +169,3 @@ def copy_file(old_name, new_name):
         return "File copied successfully."
     except Exception as e:
         return "Error: " + str(e)
-    
